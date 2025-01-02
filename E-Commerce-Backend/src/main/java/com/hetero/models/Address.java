@@ -56,6 +56,4 @@ public class Address {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JsonIgnore
 	private Customer customer;
-	
-	
 }
