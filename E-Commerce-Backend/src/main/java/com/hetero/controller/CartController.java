@@ -30,7 +30,7 @@ public class CartController {
 	
 
 	@PostMapping(value = "/cart/add")
-	public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDTO cartdto ,@RequestHeader("token")String token){
+	public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDTO cartdto ,@RequestHeader String token){
 		
 		Cart cart = cartService.addProductToCart(cartdto, token);
 		return new ResponseEntity<Cart>(cart,HttpStatus.CREATED);
@@ -38,13 +38,13 @@ public class CartController {
 	
 //	
 	@GetMapping(value = "/cart")
-	public ResponseEntity<Cart> getCartProductHandler(@RequestHeader("token")String token){
+	public ResponseEntity<Cart> getCartProductHandler(@RequestHeader String token){
 		return new ResponseEntity<>(cartService.getCartProduct(token), HttpStatus.ACCEPTED);
 	}
 	
 	
 	@DeleteMapping(value = "/cart")
-	public ResponseEntity<Cart> removeProductFromCartHander(@RequestBody CartDTO cartdto ,@RequestHeader("token")String token){
+	public ResponseEntity<Cart> removeProductFromCartHander(@RequestBody CartDTO cartdto ,@RequestHeader String token){
 		
 		Cart cart = cartService.removeProductFromCart(cartdto, token);
 		return new ResponseEntity<Cart>(cart,HttpStatus.OK);
@@ -52,7 +52,7 @@ public class CartController {
 	
 	
 	@DeleteMapping(value = "/cart/clear")
-	public ResponseEntity<Cart> clearCartHandler(@RequestHeader("token") String token){
+	public ResponseEntity<Cart> clearCartHandler(@RequestHeader String token){
 		return new ResponseEntity<>(cartService.clearCart(token), HttpStatus.ACCEPTED);
 	}
 	

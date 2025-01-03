@@ -34,7 +34,7 @@ public class OrderController {
 	private OrderService oService;
 	
 	@PostMapping("/order/place")
-	public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody OrderDTO odto,@RequestHeader("token") String token){
+	public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody OrderDTO odto,@RequestHeader String token){
 		
 		Order savedorder = oService.saveOrder(odto,token);
 		return new ResponseEntity<Order>(savedorder,HttpStatus.CREATED);
@@ -51,20 +51,20 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orders/{orderId}")
-	public Order getOrdersByOrderId(@PathVariable("orderId") Integer orderId) {
+	public Order getOrdersByOrderId(@PathVariable Integer orderId) {
 		
 		return oService.getOrderByOrderId(orderId);
 		
 	}
 	
 	@DeleteMapping("/orders/{orderId}")
-	public Order cancelTheOrderByOrderId(@PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
+	public Order cancelTheOrderByOrderId(@PathVariable Integer orderId,@RequestHeader String token){
 		
 		return oService.cancelOrderByOrderId(orderId,token);
 	}
 	
 	@PutMapping("/orders/{orderId}")
-	public ResponseEntity<Order> updateOrderByOrder(@Valid @RequestBody OrderDTO orderdto, @PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
+	public ResponseEntity<Order> updateOrderByOrder(@Valid @RequestBody OrderDTO orderdto, @PathVariable Integer orderId,@RequestHeader String token){
 		
 		Order updatedOrder= oService.updateOrderByOrder(orderdto,orderId,token);
 		
@@ -73,7 +73,7 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orders/by/date")
-	public List<Order> getOrdersByDate(@RequestParam("date") String date){
+	public List<Order> getOrdersByDate(@RequestParam String date){
 		
 		DateTimeFormatter dtf=DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		LocalDate ld=LocalDate.parse(date,dtf);
@@ -81,7 +81,7 @@ public class OrderController {
 	}
 	
 	@GetMapping("/customer/{orderId}")
-	public Customer getCustomerDetailsByOrderId(@PathVariable("orderId") Integer orderId) {
+	public Customer getCustomerDetailsByOrderId(@PathVariable Integer orderId) {
 		return oService.getCustomerByOrderid(orderId);
 	}
 

@@ -70,7 +70,7 @@ public class SellerController {
 	// Get Seller by mobile Number
 	
 	@GetMapping("/seller")
-	public ResponseEntity<Seller> getSellerByMobileHandler(@RequestParam("mobile") String mobile, @RequestHeader("token") String token){
+	public ResponseEntity<Seller> getSellerByMobileHandler(@RequestParam String mobile, @RequestHeader String token){
 		
 		Seller getSeller=sService.getSellerByMobile(mobile, token);
 		
@@ -81,7 +81,7 @@ public class SellerController {
 	// Get currently logged in seller
 	
 	@GetMapping("/seller/current")
-	public ResponseEntity<Seller> getLoggedInSellerHandler(@RequestHeader("token") String token){
+	public ResponseEntity<Seller> getLoggedInSellerHandler(@RequestHeader String token){
 		
 		Seller getSeller = sService.getCurrentlyLoggedInSeller(token);
 		
@@ -92,7 +92,7 @@ public class SellerController {
 	
 	
 	@PutMapping("/seller")
-	public ResponseEntity<Seller> updateSellerHandler(@RequestBody Seller seller, @RequestHeader("token") String token){
+	public ResponseEntity<Seller> updateSellerHandler(@RequestBody Seller seller, @RequestHeader String token){
 		Seller updatedseller=sService.updateSeller(seller, token);
 		
 		return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
@@ -101,7 +101,7 @@ public class SellerController {
 	
 	
 	@PutMapping("/seller/update/mobile")
-	public ResponseEntity<Seller> updateSellerMobileHandler(@Valid @RequestBody SellerDTO sellerdto, @RequestHeader("token") String token){
+	public ResponseEntity<Seller> updateSellerMobileHandler(@Valid @RequestBody SellerDTO sellerdto, @RequestHeader String token){
 		Seller updatedseller=sService.updateSellerMobile(sellerdto, token);
 		
 		return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
@@ -110,13 +110,13 @@ public class SellerController {
 	
 	
 	@PutMapping("/seller/update/password")
-	public ResponseEntity<SessionDTO> updateSellerPasswordHandler(@Valid @RequestBody SellerDTO sellerDto, @RequestHeader("token") String token){
+	public ResponseEntity<SessionDTO> updateSellerPasswordHandler(@Valid @RequestBody SellerDTO sellerDto, @RequestHeader String token){
 		return new ResponseEntity<>(sService.updateSellerPassword(sellerDto, token), HttpStatus.ACCEPTED);
 	}
 	
 	
 	@DeleteMapping("/seller/{sellerId}")
-	public ResponseEntity<Seller> deleteSellerByIdHandler(@PathVariable("sellerId") Integer Id, @RequestHeader("token") String token){
+	public ResponseEntity<Seller> deleteSellerByIdHandler(@PathVariable("sellerId") Integer Id, @RequestHeader String token){
 		
 		Seller deletedSeller=sService.deleteSellerById(Id, token);
 		
