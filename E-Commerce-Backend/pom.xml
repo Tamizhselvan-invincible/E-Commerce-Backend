@@ -14,7 +14,7 @@
 	<name>E-Commerce-Backend</name>
 	<description>eCommerce Backend Application</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,8 +35,15 @@
 		<dependency>
 			<groupId>com.google.firebase</groupId>
 			<artifactId>firebase-admin</artifactId>
-			<version>9.4.2</version>
+			<version>9.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpcore</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -47,6 +54,12 @@
 			<artifactId>httpclient5</artifactId>
 			<version>5.2</version> <!-- Use the latest version -->
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5</artifactId>
+			<version>5.1.3</version> <!-- Adjust version as needed -->
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.mysql</groupId>
