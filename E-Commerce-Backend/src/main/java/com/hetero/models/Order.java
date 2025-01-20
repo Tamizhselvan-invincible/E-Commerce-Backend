@@ -36,8 +36,11 @@ public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer orderId;
+
 	@PastOrPresent
 	private LocalDate date;
+
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private OrderStatusValues orderStatus;
@@ -52,7 +55,7 @@ public class Order {
 	private Customer customer;
 	
 	@OneToMany
-	private List<CartItem> ordercartItems = new ArrayList<>();
+	private List<CartItem> orderCartItems = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name = "address_id", referencedColumnName = "addressId")

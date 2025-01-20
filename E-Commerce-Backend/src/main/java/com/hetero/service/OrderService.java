@@ -2,12 +2,12 @@ package com.hetero.service;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import com.hetero.exception.LoginException;
 import com.hetero.exception.OrderException;
 import com.hetero.models.Customer;
 import com.hetero.models.Order;
 import com.hetero.models.OrderDTO;
+
 
 public interface OrderService {
 	public Order saveOrder(OrderDTO odto,String token) throws LoginException, OrderException;
@@ -25,7 +25,5 @@ public interface OrderService {
 	public Customer getCustomerByOrderid(Integer orderId) throws OrderException;
 	
 	//public Customer getCustomerIdByToken(String token) throws CustomerNotFoundException;
-	
 
-	
 }
