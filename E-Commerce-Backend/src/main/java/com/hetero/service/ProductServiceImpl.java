@@ -1,170 +1,237 @@
 package com.hetero.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.hetero.exception.ResourceNotFoundException;
+import com.hetero.models.*;
+import com.hetero.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.hetero.exception.CategoryNotFoundException;
-import com.hetero.exception.ProductNotFoundException;
-import com.hetero.models.CategoryEnum;
-import com.hetero.models.Product;
-import com.hetero.models.ProductDTO;
-import com.hetero.models.ProductStatus;
-import com.hetero.models.Seller;
-import com.hetero.repository.ProductDao;
-import com.hetero.repository.SellerDao;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
 	@Autowired
-	private ProductDao prodDao;
+	private ProductDao productDao;
 
 	@Autowired
-	private SellerService sService;
+	private ProductCategoryDao productCategoryDao;
 
 	@Autowired
-	private SellerDao sDao;
+	private ProductAttributeDao productAttributeDaoDao;
+
+	@Autowired
+	private ProductVariationDao productVariationDaoDao;
 
 	@Override
-	public Product addProductToCatalog(String token, Product product) {
+	public Product addProductToCatalog(Product product) {
+       if(product.getProductAttributes() != null) {
+           productAttributeDaoDao.saveAll(product.getProductAttributes());
+	   }
+	   if(product.getProductVariations() != null) {
+		   productVariationDaoDao.saveAll(product.getProductVariations());
+	   }
+        return productDao.save(product);
+	}
 
-		Product prod = null;
-		Seller seller1 = sService.getCurrentlyLoggedInSeller(token);
-		product.setSeller(seller1);
-
-		Seller Existingseller = sService.getSellerByMobile(product.getSeller().getMobile(), token);
-		Optional<Seller> opt = sDao.findById(Existingseller.getSellerId());
-
-		if (opt.isPresent()) {
-			Seller seller = opt.get();
-
-			product.setSeller(seller);
-
-			prod = prodDao.save(product);
-			;
-
-			seller.getProduct().add(product);
-			sDao.save(seller);
-
+	@Override
+	public Product getProductFromCatalogById (Integer id) {
+		Optional<Product> product = productDao.findById(id);
+		if(product.isPresent()) {
+			return product.get();
 		} else {
-			prod = prodDao.save(product);
-			;
-		}
-
-		return prod;
-	}
-
-	@Override
-	public Product getProductFromCatalogById(Integer id) throws ProductNotFoundException {
-
-		Optional<Product> opt = prodDao.findById(id);
-		if (opt.isPresent()) {
-			return opt.get();
-		}
-
-		else
-			throw new ProductNotFoundException("Product not found with given id");
-	}
-
-	@Override
-	public String deleteProductFromCatalog(Integer id) throws ProductNotFoundException {
-		Optional<Product> opt = prodDao.findById(id);
-		
-		if (opt.isPresent()) {
-			Product prod = opt.get();
-			System.out.println(prod);
-			prodDao.delete(prod);
-			return "Product deleted from catalog";
-		} else
-			throw new ProductNotFoundException("Product not found with given id");
-
-	}
-
-	@Override
-	public Product updateProductIncatalog(Product prod) throws ProductNotFoundException {
-
-		Optional<Product> opt = prodDao.findById(prod.getProductId());
-
-		if (opt.isPresent()) {
-			opt.get();
-			Product prod1 = prodDao.save(prod);
-			return prod1;
-		} else
-			throw new ProductNotFoundException("Product not found with given id");
-	}
-
-	@Override
-	public List<Product> getAllProductsIncatalog() {
-		List<Product> list = prodDao.findAll();
-		
-		if (list.size() > 0) {
-			return list;
-		} else
-			throw new ProductNotFoundException("No products in catalog");
-
-	}
-
-	@Override
-	public List<ProductDTO> getProductsOfCategory(CategoryEnum catenum) {
-
-		List<ProductDTO> list = prodDao.getAllProductsInACategory(catenum);
-		if (list.size() > 0) {
-
-			return list;
-		} else
-			throw new CategoryNotFoundException("No products found with category:" + catenum);
-	}
-
-	@Override
-	public List<ProductDTO> getProductsOfStatus(ProductStatus status) {
-
-		List<ProductDTO> list = prodDao.getProductsWithStatus(status);
-
-		if (list.size() > 0) {
-			return list;
-		} else
-			throw new ProductNotFoundException("No products found with given status:" + status);
-	}
-
-	@Override
-	public Product updateProductQuantityWithId(Integer id,ProductDTO prodDto) {
-		Product prod = null;
-		 Optional<Product> opt = prodDao.findById(id);
-		 
-		 if(opt!=null) {
-			  prod = opt.get();
-			 prod.setQuantity(prod.getQuantity()+prodDto.getQuantity());
-			 if(prod.getQuantity()>0) {
-				 prod.setStatus(ProductStatus.AVAILABLE);
-			 }
-			 prodDao.save(prod);
-			 
-		 }
-		 else
-			 throw new ProductNotFoundException("No product found with this Id");
-		
-		return prod;
-	}
-
-	
-
-	@Override
-	public List<ProductDTO> getAllProductsOfSeller(Integer id) {
-		
-		List<ProductDTO> list = prodDao.getProductsOfASeller(id);
-		
-		if(list.size()>0) {
-			
-			return list;
-			
-		}
-		
-		else {
-			throw new ProductNotFoundException("No products with SellerId: "+id);
+			return null;
 		}
 	}
+
+	@Override
+	public String deleteProductFromCatalog (Integer id) {
+		Optional<Product> product = productDao.findById(id);
+		if(product.isPresent()) {
+			productDao.deleteById(id);
+			return "Product deleted successfully";
+
+		}else {
+			return "Product not found";
+		}
+	}
+
+	@Override
+	public Product updateProductInCatalog (Integer productID,Product product) {
+		Product oldProduct = getProductFromCatalogById(productID);
+         if(oldProduct == null) {
+	           return null;
+            }
+
+		 oldProduct.setTitle(product.getTitle());
+		 oldProduct.setThumbnail(product.getThumbnail());
+
+		 oldProduct.setCategoryId(product.getCategoryId());
+
+		 oldProduct.setSoldQuantity(product.getSoldQuantity());
+		 oldProduct.setStock(product.getStock());
+
+		 oldProduct.setSku(product.getSku());
+		 oldProduct.setPrice(product.getPrice());
+		 oldProduct.setSalePrice(product.getSalePrice());
+		 oldProduct.setFeatured(product.isFeatured());
+
+
+		 oldProduct.setProductType(product.getProductType());
+		 oldProduct.setDate(product.getDate());
+		 oldProduct.setDescription(product.getDescription());
+		 oldProduct.setBrand(product.getBrand());
+		 oldProduct.setImages(product.getImages());
+
+
+		if(product.getProductAttributes() != null) {
+			productAttributeDaoDao.saveAll(product.getProductAttributes());
+		}
+
+		if(product.getProductVariations() != null) {
+			productVariationDaoDao.saveAll(product.getProductVariations());
+		}
+		return productDao.save(oldProduct);
+	}
+
+	@Override
+	public Product updateProductSpecificFields(Integer productId, Map<String, Object> updates) {
+		// Fetch the product by ID
+		Product product = productDao.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+
+		// Update specific fields
+		updates.forEach((field, value) -> {
+			switch (field) {
+				case "Title":
+					product.setTitle((String) value);
+					break;
+
+				case "Stock":
+					product.setStock((Integer) value);
+					break;
+
+				case "SKU":
+					product.setSku((String) value);
+					break;
+
+				case "Price":
+					product.setPrice((Double) value);
+					break;
+
+				case "Thumbnail":
+					product.setThumbnail((String) value);
+					break;
+
+				case "ProductType":
+					product.setProductType((String) value);
+					break;
+
+				case "Date":
+					product.setDate(new Date((Long) value)); // Assuming date is passed as a timestamp
+					break;
+
+				case "SalePrice":
+					product.setSalePrice((Double) value);
+					break;
+
+				case "IsFeatured":
+					product.setFeatured((Boolean) value);
+					break;
+
+				case "Brand":
+					// Handle "Brand" field, converting the map to a Brand entity
+					Map<String, Object> brandData = (Map<String, Object>) value;
+					Brand brand = new Brand();
+					brand.setId((Integer) brandData.get("id"));
+					brand.setBrandName((String) brandData.get("name"));
+					product.setBrand(brand);
+					break;
+
+				case "CategoryId":
+					product.setCategoryId((String) value);
+					break;
+
+				case "Description":
+					product.setDescription((String) value);
+					break;
+
+				case "Images":
+					product.setImages((List<String>) value); // Assuming a list of image URLs is passed
+					break;
+
+				case "SoldQuantity":
+					product.setSoldQuantity((Integer) value);
+					break;
+
+				default:
+					throw new IllegalArgumentException("Unsupported field: " + field);
+			}
+		});
+
+
+		// Save the updated product
+		return productDao.save(product);
+	}
+
+	@Override
+	public List<Product> getAllProductsInCatalog () {
+		return productDao.findAll();
+	}
+
+	@Override
+	public List<ProductDTO> getProductsOfStatus (ProductStatus status) {
+		return List.of();
+	}
+
+	@Override
+	public Product updateProductSoldQuantityWithId (Integer id, ProductDTO prodDTO) {
+		return null;
+	}
+
+	@Override
+	public ProductCategory addProductCategory (ProductCategory productCategory) {
+		return productCategoryDao.save(productCategory);
+	}
+
+	@Override
+	public ProductCategory getProductCategoryById (Integer id) {
+		return productCategoryDao.findById(id).get();
+	}
+
+	@Override
+	public List<ProductCategory> getAllProductCategories () {
+		return productCategoryDao.findAll();
+	}
+
+	@Override
+	public List<ProductCategory> getAllProductCategoriesByProductId (Integer productId) {
+		return productCategoryDao.findAllByProductId(productId);
+	}
+
+	@Override
+	public ProductCategory updateProductCategory (Integer id,ProductCategory productCategory) {
+		ProductCategory oldCategory = productCategoryDao.findById(id).get();
+
+		oldCategory.setCategoryId(productCategory.getCategoryId());
+		oldCategory.setProductId(productCategory.getProductId());
+		return productCategoryDao.save(oldCategory);
+	}
+
+	@Override
+	public String deleteProductCategory (Integer id) {
+		Optional<ProductCategory> productCategory = productCategoryDao.findById(id);
+		if(productCategory.isPresent()) {
+			productCategoryDao.deleteById(id);
+			return "Product deleted successfully";
+		}else {
+			return "Product not found";
+		}
+	}
+
 
 }

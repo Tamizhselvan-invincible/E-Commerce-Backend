@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import javax.validation.constraints.PastOrPresent;
 
 
@@ -33,6 +32,9 @@ public class Category {
     @URL
     @Column(name = "category_image")
     private String categoryImage;
+
+    @Column(name = "parent_category_id")
+    private Integer parentCategoryId;
 
     @Column(name = "is_featured", nullable = false, columnDefinition = "boolean default false")
     private Boolean isFeatured;

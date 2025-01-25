@@ -1,7 +1,7 @@
 package com.hetero.service;
 
 import com.hetero.models.Category;
-import com.hetero.repository.CategoryRepository;
+import com.hetero.repository.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +11,10 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryDao categoryRepository;
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryDao categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
