@@ -1,11 +1,11 @@
 package com.hetero.models;
 
-import com.google.firebase.database.annotations.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
 

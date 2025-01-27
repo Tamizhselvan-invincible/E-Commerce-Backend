@@ -1,81 +1,79 @@
-//package com.hetero.controller;
-//
-//import java.time.LocalDate;
-//import java.time.format.DateTimeFormatter;
-//import java.util.List;
-//
-//import javax.validation.Valid;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.DeleteMapping;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestHeader;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import com.hetero.models.Customer;
-//import com.hetero.models.Order;
-//import com.hetero.models.OrderDTO;
-//import com.hetero.repository.OrderDao;
-//import com.hetero.service.OrderService;
-//
-//@RestController
-//public class OrderController {
-//	@Autowired
-//	private OrderDao oDao;
-//
-//	@Autowired
-//	private OrderService oService;
-//
-//	@PostMapping("/order/place")
-//	public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody Order order){
-//
-//		Order savedorder = oService.saveOrder(order);
-//		return new ResponseEntity<Order>(savedorder,HttpStatus.CREATED);
-//
-//	}
-//
-//	@GetMapping("/orders")
-//	public List<Order> getAllOrders(){
-//		List<Order> listOfAllOrders = oService.getAllOrders();
-//		return listOfAllOrders;
-//
-//	}
-//
-//	@GetMapping("/orders/{orderId}")
-//	public Order getOrdersByOrderId(@PathVariable Integer orderId) {
-//		return oService.getOrderByOrderId(orderId);
-//	}
-//
-//	@DeleteMapping("/orders/{orderId}")
-//	public String cancelTheOrderByOrderId(@PathVariable Integer orderId,@RequestHeader String token){
-//
-//		return oService.cancelOrderByOrderId(orderId);
-//	}
-//
-//
-//	@PutMapping("/orders/{orderId}")
-//	public ResponseEntity<Order> updateOrderByOrder(@PathVariable Integer orderId,@Valid @RequestBody Order order){
-//
-//		Order updatedOrder= oService.updateOrderByOrder(orderId,order);
-//		return new ResponseEntity<Order>(updatedOrder,HttpStatus.ACCEPTED);
-//
-//	}
-//
-//	@GetMapping("/orders/by/date")
-//	public List<Order> getOrdersByDate(@RequestParam String date){
-//
-//		DateTimeFormatter dtf=DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//		LocalDate ld=LocalDate.parse(date,dtf);
-//		return oService.getAllOrdersByDate(ld);
-//	}
-//
-//
-//
-//}
+package com.hetero.controller;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.hetero.models.Order;
+import com.hetero.service.OrderService;
+
+@RestController
+public class OrderController {
+
+
+	@Autowired
+	private OrderService orderService;
+
+	@PostMapping("/order/place")
+	public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody Order order){
+
+		Order savedorder = orderService.saveOrder(order);
+		return new ResponseEntity<>(savedorder,HttpStatus.CREATED);
+
+	}
+
+	@GetMapping("/orders")
+	public List<Order> getAllOrders(){
+		List<Order> listOfAllOrders = orderService.getAllOrders();
+		return listOfAllOrders;
+
+	}
+
+	@GetMapping("/orders/{orderId}")
+	public Order getOrdersByOrderId(@PathVariable Integer orderId) {
+		return orderService.getOrderByOrderId(orderId);
+	}
+
+
+	///Delete Order
+	@DeleteMapping("/orders/{orderId}")
+	public String cancelTheOrderByOrderId(@PathVariable Integer orderId){
+
+		return orderService.cancelOrderByOrderId(orderId);
+	}
+
+
+	@PutMapping("/orders/{orderId}")
+	public ResponseEntity<Order> updateOrderByOrderId(@PathVariable Integer orderId,@Valid @RequestBody Order order){
+
+		Order updatedOrder= orderService.updateOrderByOrder(orderId,order);
+		return new ResponseEntity<Order>(updatedOrder,HttpStatus.ACCEPTED);
+
+	}
+
+	///Update Specific Order Values
+    public ResponseEntity<Order> updateSpecificOrderValues(@PathVariable Integer orderId, @Valid @RequestBody Map<String,Object> values){
+
+		Order updatedOrder= orderService.updateSpecificOrderValues(orderId,values);
+		return new ResponseEntity<>(updatedOrder,HttpStatus.ACCEPTED);
+	}
+
+	@GetMapping("/orders/by/date")
+	public List<Order> getAllOrdersByDate(@RequestParam String date){
+
+		DateTimeFormatter dtf=DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		LocalDate ld=LocalDate.parse(date,dtf);
+		return orderService.getAllOrdersByDate(ld);
+	}
+
+
+
+}

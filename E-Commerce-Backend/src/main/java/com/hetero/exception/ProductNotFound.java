@@ -1,4 +1,4 @@
-package com.hetero.controller;
+package com.hetero.exception;
 
 public class ProductNotFound extends RuntimeException{
 
