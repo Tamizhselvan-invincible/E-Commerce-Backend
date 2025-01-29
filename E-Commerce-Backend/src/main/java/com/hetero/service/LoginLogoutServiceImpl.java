@@ -139,28 +139,8 @@ public class LoginLogoutServiceImpl implements LoginLogoutService{
 
 
 
-	// Method to logout a seller and delete his session token
 
-	@Override
-	public SessionDTO logoutSeller(SessionDTO session) {
 
-		String token = session.getToken();
-
-		checkTokenStatus(token);
-
-		Optional<UserSession> opt = sessionDao.findByToken(token);
-
-		if(!opt.isPresent())
-			throw new LoginException("User not logged in. Invalid session token. Login Again.");
-
-		UserSession user = opt.get();
-
-		sessionDao.delete(user);
-
-		session.setMessage("Logged out sucessfully.");
-
-		return session;
-	}
 
 
 	// Method to delete expired tokens
