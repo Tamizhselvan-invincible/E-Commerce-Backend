@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hetero.models.Cart;
 import com.hetero.models.CartDTO;
 import com.hetero.repository.CartDao;
-import com.hetero.repository.CustomerDao;
 import com.hetero.service.CartService;
 
 @RestController
@@ -25,36 +24,7 @@ public class CartController {
 	@Autowired
 	private CartDao cartDao;
 
-	@Autowired
-	private CustomerDao customerDao;
 
-
-	@PostMapping(value = "/cart/add")
-	public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDTO cartdto ,@RequestHeader String token){
-
-		Cart cart = cartService.addProductToCart(cartdto, token);
-		return new ResponseEntity<>(cart,HttpStatus.CREATED);
-	}
-
-//
-	@GetMapping(value = "/cart")
-	public ResponseEntity<Cart> getCartProductHandler(@RequestHeader String token){
-		return new ResponseEntity<>(cartService.getCartProduct(token), HttpStatus.ACCEPTED);
-	}
-
-
-	@DeleteMapping(value = "/cart")
-	public ResponseEntity<Cart> removeProductFromCartHander(@RequestBody CartDTO cartdto ,@RequestHeader String token){
-
-		Cart cart = cartService.removeProductFromCart(cartdto, token);
-		return new ResponseEntity<>(cart,HttpStatus.OK);
-	}
-
-
-	@DeleteMapping(value = "/cart/clear")
-	public ResponseEntity<Cart> clearCartHandler(@RequestHeader String token){
-		return new ResponseEntity<>(cartService.clearCart(token), HttpStatus.ACCEPTED);
-	}
 
 
 }

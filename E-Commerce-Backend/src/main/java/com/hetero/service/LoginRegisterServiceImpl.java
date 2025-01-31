@@ -1,7 +1,7 @@
 package com.hetero.service;
 
 import com.hetero.models.UserDTO;
-import com.hetero.repository.UserDTODao;
+import com.hetero.repository.LoginUserDTODao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,10 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDTOServiceImpl implements UserDTOService {
+public class LoginRegisterServiceImpl implements LoginRegisterService {
 
     @Autowired
-    private UserDTODao userDetailsDao;
+    private LoginUserDTODao userDetailsDao;
 
     @Autowired
     private JwtService jwtService;
