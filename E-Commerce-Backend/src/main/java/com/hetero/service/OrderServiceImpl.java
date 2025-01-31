@@ -125,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
 
 }
 	@Override
-	public String cancelOrderByOrderId(int id) throws OrderException {
+	public String cancelOrderByOrderId(Integer id) throws OrderException {
       if (orderDao.findById(id).isPresent()) {
 		  orderDao.deleteById(id);
 		  return "Order cancelled";

@@ -23,7 +23,7 @@ public interface OrderService {
 
 	public Order updateSpecificOrderValues(int id, Map<String,Object> values) throws OrderException;
 
-	public String cancelOrderByOrderId(int id) throws OrderException ;
+	public String cancelOrderByOrderId(Integer id) throws OrderException ;
 
 
 	/*

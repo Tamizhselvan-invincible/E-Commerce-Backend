@@ -19,4 +19,10 @@ public class UserDTOController {
     public UserDTO register(@RequestBody UserDTO userDTO) {
         return userDTOService.registerUser(userDTO);
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody UserDTO userDTO) {
+        System.out.println("DEBUG::: Login USER  "+userDTO);
+        return userDTOService.verifyUser(userDTO);
+    }
 }

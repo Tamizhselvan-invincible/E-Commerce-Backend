@@ -7,4 +7,6 @@ public interface UserDTOService {
 
 
     public UserDTO registerUser(UserDTO userDTO);
+
+    String verifyUser (UserDTO userDTO);
 }
