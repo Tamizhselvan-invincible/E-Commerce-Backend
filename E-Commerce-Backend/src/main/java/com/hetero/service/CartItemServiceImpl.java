@@ -10,29 +10,15 @@ import com.hetero.models.Product;
 import com.hetero.models.ProductStatus;
 import com.hetero.repository.ProductDao;
 
+import javax.transaction.Transactional;
+
 @Service
 public class CartItemServiceImpl implements CartItemService{
 
 	@Autowired
 	ProductDao productDao;
 
-	@Override
-	public CartItem createItemforCart(CartDTO cartdto) {
 
-		Product existingProduct = productDao.findById(cartdto.getProductId()).orElseThrow( () -> new ProductNotFoundException("Product Not found"));
-//
-//		if(existingProduct.getStatus().equals(ProductStatus.OUTOFSTOCK) || existingProduct.getQuantity() == 0) {
-//			throw new ProductNotFoundException("Product OUT OF STOCK");
-//		}
-
-		CartItem newItem = new CartItem();
-
-		newItem.setCartItemQuantity(1);
-
-//		newItem.setCartProduct(existingProduct);
-
-		return newItem;
-	}
 
 //	@Override
 //	public CartItem addItemToCart(CartDTO cartdto) {

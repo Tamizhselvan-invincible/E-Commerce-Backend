@@ -9,6 +9,8 @@ import com.hetero.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +33,7 @@ public class ProductController {
 	// returns added product
 
 	@PostMapping("/products")
-	public ResponseEntity<Product> addProductToCatalogHandler(@Valid @RequestBody Product product) {
+	public ResponseEntity<Product> addProduct(@Valid @RequestBody Product product) {
 
 		Product prod = pService.addProductToCatalog(product);
 
@@ -43,9 +45,10 @@ public class ProductController {
 	// product
 
 	@GetMapping("/product/{id}")
-	public ResponseEntity<Product> getProductFromCatalog(@PathVariable Integer id) {
+	public ResponseEntity<Product> getProduct(@PathVariable Integer id) {
 
 		Product prod = pService.getProductFromCatalogById(id);
+
 
 		return new ResponseEntity<>(prod, HttpStatus.FOUND);
 
@@ -56,7 +59,7 @@ public class ProductController {
 	// delete for any other reason
 
 	@DeleteMapping("/product/{id}")
-	public ResponseEntity<String> deleteProductFromCatalog(@PathVariable Integer id) {
+	public ResponseEntity<String> deleteProduct(@PathVariable Integer id) {
 
 		String res = pService.deleteProductFromCatalog(id);
 		return new ResponseEntity<>(res, HttpStatus.OK);

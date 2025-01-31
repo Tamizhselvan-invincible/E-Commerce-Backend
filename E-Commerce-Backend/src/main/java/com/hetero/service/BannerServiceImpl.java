@@ -4,6 +4,7 @@ import com.hetero.models.Banner;
 import com.hetero.repository.BannerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class BannerServiceImpl implements BannerService {
         return bannerRepository.save(banner);
     }
 
+    @Transactional
     @Override
     public Banner updateBanner(int id, Banner banner) {
         Banner existingBanner = bannerRepository.findById(id)
@@ -30,6 +32,8 @@ public class BannerServiceImpl implements BannerService {
         return bannerRepository.save(existingBanner);
     }
 
+
+    @Transactional
     @Override
     public void deleteBanner(int id) {
         if (!bannerRepository.existsById(id)) {

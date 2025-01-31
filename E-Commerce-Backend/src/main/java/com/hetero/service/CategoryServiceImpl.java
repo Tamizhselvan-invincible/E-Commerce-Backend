@@ -4,12 +4,13 @@ import com.hetero.models.Category;
 import com.hetero.repository.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoryServiceImpl {
+public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryDao categoryRepository;
 
@@ -18,7 +19,8 @@ public class CategoryServiceImpl {
         this.categoryRepository = categoryRepository;
     }
 
-    // Create or Update a category
+    @Transactional
+    @Override
     public Category saveCategory(Category category) {
         return categoryRepository.save(category);
     }
@@ -33,6 +35,8 @@ public class CategoryServiceImpl {
         return categoryRepository.findById(id);
     }
 
+    @Transactional
+    @Override
     // Delete a category by ID
     public void deleteCategoryById(Integer id) {
         categoryRepository.deleteById(id);

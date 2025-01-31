@@ -5,6 +5,7 @@ import com.hetero.models.Images;
 import com.hetero.repository.ImageDao;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -17,6 +18,8 @@ import java.nio.file.Paths;
 import org.springframework.data.domain.Page;
 
 
+
+
 @Service
 public class ImageServiceImpl implements ImageService {
     @Autowired
@@ -25,6 +28,7 @@ public class ImageServiceImpl implements ImageService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Transactional
     @Override
     public Images uploadImage(MultipartFile file, String path, String imageName) throws Exception {
         Path uploadPath = Paths.get(uploadDir + "/" + path);
@@ -47,6 +51,7 @@ public class ImageServiceImpl implements ImageService {
         return image;
     }
 
+    @Transactional
     @Override
     public String saveImageToDatabase(Images image) {
         Images savedImage = imageDao.save(image);
@@ -69,6 +74,7 @@ public class ImageServiceImpl implements ImageService {
         return imageDao.findAll();
     }
 
+    @Transactional
     @Override
     public void deleteImage(String imageId) throws Exception {
         Images image = imageDao.findById(imageId)

@@ -28,7 +28,6 @@ public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
@@ -40,7 +39,8 @@ public class SecurityConfig {
                         )
                         .permitAll()
                         .anyRequest().authenticated())
-                .formLogin(login -> login.permitAll())
+               .formLogin(AbstractHttpConfigurer::disable)
+//                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                .addFilterBefore( jwtFilter, UsernamePasswordAuthenticationFilter.class)
                .build();

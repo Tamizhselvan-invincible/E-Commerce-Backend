@@ -15,6 +15,8 @@ import com.hetero.exception.OrderException;
 import com.hetero.models.Order;
 import com.hetero.repository.OrderDao;
 
+import javax.transaction.Transactional;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 	@Autowired
@@ -46,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
 		return orderDao.findByDate(orderDate);
 	}
 
+	@Transactional
 	@Override
 	public Order updateOrderByOrder (int id, Order order) {
 		Optional<Order> existingOrder = orderDao.findById(id);
@@ -65,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
 		throw new RuntimeException("Order not found");
 	}
 
+	@Transactional
 	@Override
 	public Order updateSpecificOrderValues (int id, Map<String, Object> updates) throws OrderException {
 
@@ -124,6 +128,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 }
+
+@Transactional
 	@Override
 	public String cancelOrderByOrderId(Integer id) throws OrderException {
       if (orderDao.findById(id).isPresent()) {

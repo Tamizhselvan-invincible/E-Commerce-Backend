@@ -27,12 +27,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     ApplicationContext context;
+    @Autowired
+    TokenBlockListService tokenBlockListService;
 
 
 
 
     @Override
     protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
 
         String authHeader = request.getHeader("Authorization");
 
@@ -42,7 +45,15 @@ public class JwtFilter extends OncePerRequestFilter {
         ///This is Extract the exact token form the bearer token (It starts at index 7)
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             jwtToken = authHeader.substring(7);
+
+
+            if(tokenBlockListService.isTokenBlacklisted(jwtToken)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
             username = jwtService.extractUserNameFormToken(jwtToken);
+
         }
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

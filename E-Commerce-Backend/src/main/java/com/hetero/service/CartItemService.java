@@ -5,6 +5,6 @@ import com.hetero.models.CartItem;
 
 public interface CartItemService {
 
-	public CartItem createItemforCart(CartDTO cartdto);
+//	public CartItem createItemforCart(CartDTO cartdto);
 
 }

@@ -48,6 +48,7 @@ public class BrandServiceImpl implements BrandService {
         return brand;
     }
 
+    @Transactional
     @Override
     public Brand updateBrand(Brand brand) {
         if (!brandDao.existsById(brand.getId())) {

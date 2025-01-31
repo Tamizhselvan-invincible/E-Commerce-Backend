@@ -23,7 +23,7 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PostMapping("/order/place")
-	public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody Order order){
+	public ResponseEntity<Order> addNewOrder(@Valid @RequestBody Order order){
 
 		Order savedorder = orderService.saveOrder(order);
 		return new ResponseEntity<>(savedorder,HttpStatus.CREATED);
@@ -32,8 +32,7 @@ public class OrderController {
 
 	@GetMapping("/orders")
 	public List<Order> getAllOrders(){
-		List<Order> listOfAllOrders = orderService.getAllOrders();
-		return listOfAllOrders;
+        return orderService.getAllOrders();
 
 	}
 
@@ -60,6 +59,7 @@ public class OrderController {
 	}
 
 	///Update Specific Order Values
+	@GetMapping("/orders/update/{orderId}")
     public ResponseEntity<Order> updateSpecificOrderValues(@PathVariable Integer orderId, @Valid @RequestBody Map<String,Object> values){
 
 		Order updatedOrder= orderService.updateSpecificOrderValues(orderId,values);

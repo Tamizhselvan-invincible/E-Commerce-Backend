@@ -12,6 +12,8 @@ import com.hetero.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -27,6 +29,8 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductVariationDao productVariationDaoDao;
 
+
+	@Transactional
 	@Override
 	public Product addProductToCatalog(Product product) {
        if(product.getProductAttributes() != null) {
@@ -38,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
         return productDao.save(product);
 	}
 
+
 	@Override
 	public Product getProductFromCatalogById (Integer id) {
 		Optional<Product> product = productDao.findById(id);
@@ -48,6 +53,8 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 
+
+	@Transactional
 	@Override
 	public String deleteProductFromCatalog (Integer id) {
 		Optional<Product> product = productDao.findById(id);
@@ -60,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public Product updateProductInCatalog (Integer productID,Product product) {
 		Product oldProduct = getProductFromCatalogById(productID);
@@ -98,6 +106,7 @@ public class ProductServiceImpl implements ProductService {
 		return productDao.save(oldProduct);
 	}
 
+	@Transactional
 	@Override
 	public Product updateProductSpecificFields(Integer productId, Map<String, Object> updates) {
 		// Fetch the product by ID
@@ -188,11 +197,14 @@ public class ProductServiceImpl implements ProductService {
 		return List.of();
 	}
 
+
+	@Transactional
 	@Override
 	public Product updateProductSoldQuantityWithId (Integer id, ProductDTO prodDTO) {
 		return null;
 	}
 
+	@Transactional
 	@Override
 	public ProductCategory addProductCategory (ProductCategory productCategory) {
 		return productCategoryDao.save(productCategory);
@@ -213,6 +225,7 @@ public class ProductServiceImpl implements ProductService {
 		return productCategoryDao.findAllByProductId(productId);
 	}
 
+	@Transactional
 	@Override
 	public ProductCategory updateProductCategory (Integer id,ProductCategory productCategory) {
 		ProductCategory oldCategory = productCategoryDao.findById(id).get();
@@ -222,6 +235,7 @@ public class ProductServiceImpl implements ProductService {
 		return productCategoryDao.save(oldCategory);
 	}
 
+	@Transactional
 	@Override
 	public String deleteProductCategory (Integer id) {
 		Optional<ProductCategory> productCategory = productCategoryDao.findById(id);

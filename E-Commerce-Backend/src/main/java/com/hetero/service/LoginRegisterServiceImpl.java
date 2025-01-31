@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class LoginRegisterServiceImpl implements LoginRegisterService {
 
@@ -23,6 +25,7 @@ public class LoginRegisterServiceImpl implements LoginRegisterService {
 
     private final BCryptPasswordEncoder bCryptEncoder = new BCryptPasswordEncoder(12);
 
+    @Transactional
     @Override
     public UserDTO registerUser (UserDTO userDTO) {
         userDTO.setPassword(bCryptEncoder.encode(userDTO.getPassword()));
