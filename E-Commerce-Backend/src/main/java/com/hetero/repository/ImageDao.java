@@ -1,14 +1,19 @@
 package com.hetero.repository;
 
 import com.hetero.models.Images;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.time.Instant;
+
 import java.time.LocalDateTime;
-import java.util.List;
+
+import org.springframework.data.domain.Page;
+
 
 @Repository
-public interface ImageDao extends JpaRepository<Images, Long> {
-    List<Images> findByMediaCategoryOrderByCreatedAtDesc(String mediaCategory, int limit);
-    List<Images> findByMediaCategoryAndCreatedAtBeforeOrderByCreatedAtDesc(String mediaCategory, LocalDateTime createdAt, int limit);
+public interface ImageDao extends JpaRepository<Images, String> {
+    Page<Images> findByMediaCategoryOrderByCreatedAtDesc(String mediaCategory, Pageable pageable);
+    Page<Images> findByMediaCategoryAndCreatedAtLessThanOrderByCreatedAtDesc(
+            String mediaCategory, LocalDateTime lastFetchedDate, Pageable pageable);
 }
+

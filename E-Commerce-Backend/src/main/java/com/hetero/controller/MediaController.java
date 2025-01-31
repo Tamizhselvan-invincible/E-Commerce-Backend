@@ -4,6 +4,8 @@ package com.hetero.controller;
 import com.hetero.models.Images;
 import com.hetero.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
         import org.springframework.web.multipart.MultipartFile;
@@ -13,37 +15,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/images")
 public class MediaController  {
-
     @Autowired
     private ImageService imageService;
 
-
     @PostMapping("/upload")
-    public ResponseEntity<Images> uploadImage(
+    public ResponseEntity<String> uploadImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("path") String path,
             @RequestParam("imageName") String imageName) {
-        return ResponseEntity.ok(imageService.uploadImage(file, path, imageName));
+        try {
+            Images image = imageService.uploadImage(file, path, imageName);
+            String imageId = imageService.saveImageToDatabase(image);
+            return ResponseEntity.ok(imageId);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<String> saveImageDetails(@RequestBody Images image) {
-        return ResponseEntity.ok(imageService.saveImageDetails(image));
-    }
-
-    @GetMapping("/fetch")
-    public ResponseEntity<List<Images>> fetchImages(
+    @GetMapping
+    public ResponseEntity<Page<Images>> fetchImages(
             @RequestParam("mediaCategory") String mediaCategory,
-            @RequestParam("limit") int limit) {
-        return ResponseEntity.ok(imageService.fetchImages(mediaCategory, limit));
+            Pageable pageable) {
+        return ResponseEntity.ok(imageService.fetchImages(mediaCategory, pageable));
     }
 
-    @GetMapping("/loadMore")
-    public ResponseEntity<List<Images>> loadMoreImages(
+    @GetMapping("/more")
+    public ResponseEntity<Page<Images>> loadMoreImages(
             @RequestParam("mediaCategory") String mediaCategory,
-            @RequestParam("limit") int limit,
-            @RequestParam("lastFetchedDate") LocalDateTime lastFetchedDate) {
-        return ResponseEntity.ok(imageService.loadMoreImages(mediaCategory, limit, lastFetchedDate));
+            @RequestParam("lastFetchedDate") LocalDateTime lastFetchedDate,
+            Pageable pageable) {
+        return ResponseEntity.ok(imageService.loadMoreImages(mediaCategory, pageable, lastFetchedDate));
     }
 
     @GetMapping("/all")
@@ -51,9 +52,13 @@ public class MediaController  {
         return ResponseEntity.ok(imageService.fetchAllImages());
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteImage(@PathVariable Long id) {
-        imageService.deleteImage(id);
-        return ResponseEntity.ok("Image deleted successfully");
+    @DeleteMapping("/{imageId}")
+    public ResponseEntity<Void> deleteImage(@PathVariable String imageId) {
+        try {
+            imageService.deleteImage(imageId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

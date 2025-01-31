@@ -3,26 +3,25 @@ package com.hetero.models;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+import lombok.*;
+
 @Data
 @Entity
 @Table(name = "images")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Images {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @JsonProperty("url")
-    @Column(nullable = false)
     private String url;
 
     @JsonProperty("folder")
@@ -31,15 +30,16 @@ public class Images {
     @JsonProperty("sizeBytes")
     private Long sizeBytes;
 
+    @JsonProperty("mediaCategory")
+    private String mediaCategory;
+
     @JsonProperty("filename")
-    @Column(nullable = false)
     private String filename;
 
     @JsonProperty("fullPath")
     private String fullPath;
 
     @JsonProperty("createdAt")
-    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @JsonProperty("updatedAt")
@@ -47,17 +47,4 @@ public class Images {
 
     @JsonProperty("contentType")
     private String contentType;
-
-    @JsonProperty("mediaCategory")
-    private String mediaCategory;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

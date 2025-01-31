@@ -3,86 +3,79 @@ package com.hetero.service;
 
 import com.hetero.models.Images;
 import com.hetero.repository.ImageDao;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
-import java.io.IOException;
-import java.nio.file.*;
-        import java.time.Instant;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.springframework.data.domain.Page;
+
 
 @Service
 public class ImageServiceImpl implements ImageService {
+    @Autowired
+    private ImageDao imageDao;
 
-    private final ImageDao imageRepository;
-
-    @Value("${image.storage.path}")
-    private String storagePath;
-
-    public ImageServiceImpl(ImageDao imageRepository) {
-        this.imageRepository = imageRepository;
-    }
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Override
-    public Images uploadImage(MultipartFile file, String path, String imageName) {
-        try {
-            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Path destination = Paths.get(storagePath + "/" + path + "/" + fileName);
-            Files.createDirectories(destination.getParent());
-            Files.write(destination, file.getBytes(), StandardOpenOption.CREATE);
-
-            Images image = new Images();
-            image.setUrl(destination.toUri().toString());
-            image.setFolder(path);
-            image.setFilename(fileName);
-            image.setSizeBytes(file.getSize());
-            image.setFullPath(destination.toString());
-            image.setContentType(file.getContentType());
-            image.setCreatedAt(LocalDateTime.now());
-
-            return imageRepository.save(image);
-        } catch (IOException e) {
-            throw new RuntimeException("Error uploading file: " + e.getMessage());
+    public Images uploadImage(MultipartFile file, String path, String imageName) throws Exception {
+        Path uploadPath = Paths.get(uploadDir + "/" + path);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
+
+        Path filePath = uploadPath.resolve(imageName);
+        Files.copy(file.getInputStream(), filePath);
+
+        Images image = new Images();
+        image.setUrl("/api/images/" + path + "/" + imageName);
+        image.setFolder(path);
+        image.setFilename(imageName);
+        image.setSizeBytes(file.getSize());
+        image.setFullPath(path + "/" + imageName);
+        image.setCreatedAt(LocalDateTime.now());
+        image.setContentType(file.getContentType());
+
+        return image;
     }
 
     @Override
-    public String saveImageDetails(Images image) {
-        return String.valueOf(imageRepository.save(image).getId());
+    public String saveImageToDatabase(Images image) {
+        Images savedImage = imageDao.save(image);
+        return savedImage.getId();
     }
 
     @Override
-    public List<Images> fetchImages(String mediaCategory, int limit) {
-        return imageRepository.findByMediaCategoryOrderByCreatedAtDesc(mediaCategory, limit);
+    public Page<Images> fetchImages(String mediaCategory, Pageable pageable) {
+        return imageDao.findByMediaCategoryOrderByCreatedAtDesc(mediaCategory, pageable);
     }
 
     @Override
-    public List<Images> loadMoreImages (String mediaCategory, int limit, LocalDateTime lastFetchedDate) {
-        return imageRepository.findByMediaCategoryAndCreatedAtBeforeOrderByCreatedAtDesc(mediaCategory, lastFetchedDate, limit);
+    public Page<Images> loadMoreImages(String mediaCategory, Pageable pageable, LocalDateTime lastFetchedDate) {
+        return imageDao.findByMediaCategoryAndCreatedAtLessThanOrderByCreatedAtDesc(
+                mediaCategory, lastFetchedDate, pageable);
     }
-
-
 
     @Override
     public List<Images> fetchAllImages() {
-        return imageRepository.findAll();
+        return imageDao.findAll();
     }
 
     @Override
-    public void deleteImage(Long id) {
-        Optional<Images> image = imageRepository.findById(id);
-        if (image.isPresent()) {
-            try {
-                Files.deleteIfExists(Paths.get(image.get().getFullPath()));
-                imageRepository.deleteById(id);
-            } catch (IOException e) {
-                throw new RuntimeException("Error deleting file: " + e.getMessage());
-            }
-        } else {
-            throw new RuntimeException("Image not found with id: " + id);
-        }
+    public void deleteImage(String imageId) throws Exception {
+        Images image = imageDao.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
+
+        Path filePath = Paths.get(uploadDir + "/" + image.getFullPath());
+        Files.deleteIfExists(filePath);
+        imageDao.deleteById(imageId);
     }
 }
